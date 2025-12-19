@@ -288,7 +288,7 @@ switchport mode access
 switchport access vlan 90
 ex
 
-int fa0/21-24
+int range fa0/21-24
 switchport mode trunk
 switchport trunk native vlan 50
 ex
@@ -334,10 +334,10 @@ do wr
 ### 2.1. STP Portfast and BPDUguard configs on all access ports (1:32:00)
 
 * Portfast: Orange to green fast in switch
-  * Access switch: 2 trunk (gig0/1-2)
+  * Access switch: 6 trunk (gig0/1-2, fa0/21-24)
 
 ```
-int range fa0/1-24
+int range fa0/1-20
 spanning-tree portfast
 spanning-tree bpduguard enable
 ex
@@ -462,7 +462,7 @@ do wr
 ```
 
 * Uncluster cloud for 1 moment
-* SEACOM router: GUI
+* VNPT router: GUI
   * Click top then minimize (optional)
   * gig0/0 connect to firewall 1
     * Config -> gig0/0
@@ -480,7 +480,7 @@ do wr
     * IP: 20.20.20.1
     * Subnet mask: 255.255.255.252
 * Similar for 2 other router
-* SAFARICOM router:
+* FPT router:
   * gig0/0 connect to firewall 1
     * Config -> gig0/0
     * Click On
@@ -497,12 +497,12 @@ do wr
     * IP: 30.30.30.1
     * Subnet mask: 255.255.255.252
 * Cloud router:
-  * gig0/0 connect to SEACOM
+  * gig0/0 connect to VNPT
     * Config -> gig0/0
     * Click On
     * IP: 20.20.20.2
     * Subnet mask: 255.255.255.252
-  * gig0/1 connect to SAFARICOM
+  * gig0/1 connect to FPT
     * Config -> gig0/1
     * Click On
     * IP: 30.30.30.2
@@ -1248,6 +1248,94 @@ wr mem
 ```
 
 * Test DHCP and ping: 3:13:20
+  * IMPORTANT: If can't ping Camera, turn off Wireless0 and restart
 
 ## 11. Wireless network configuration (3:15:30)
+
+* Connect 1 PC to WLC
+* WLC -> Config -> Management:
+  * IP: 10.50.0.10
+  * Subnet mask: 255.255.240.0
+  * Default gateway: 10.50.0.1
+  * DNS: 172.16.0.7
+* PC -> Desktop -> IP config
+  * IP: 10.50.0.9
+  * Subnet mask: 255.255.240.0
+  * Default gateway: 10.50.0.1
+  * DNS: 172.16.0.7
+* Try to ping 10.50.0.10 from PC
+* PC -> Web browser -> access 10.50.0.10
+  * username (cisco), password (i-love-HCMUT)
+  * System name: CISCO-HOSPITAL
+  * IP: 10.50.0.10
+  * Subnet mask: 255.255.240.0
+  * Default gateway: 10.50.0.1
+  * Management VLAN ID: 50 (Same as WLAN VLAN)
+  * Click Next
+
+  * Network name: test@1234 (delete later)
+  * Passphrase: test@1234
+  * Click Next -> Apply -> OK -> Close window
+
+* Reattach PC to Switch port fa0/22, need to be in same VLAN as WLC
+  * Switch -> Config -> fa0/22 -> choose VLAN 50
+  * Try to ping 10.50.0.10 from PC again
+* PC -> Browser -> https://10.50.0.10
+  * Login with username & password (cisco, i-love-HCMUT)
+  * Check WIRELESS tab, everything is blank -> Go to every LAP, connect power
+  * CONTROLLER tab, click Interfaces. We need to create for vlan 50,60
+  * VLAN 60:
+    * Click New
+    * Interface name: VLAN60; VLAN id: 60
+    * IMPORTANT: Port number is the port of WLC that connect to switch (Gig1) -> Port number 1
+    * Hover over router to see IP
+    * IP: 10.60.0.9 (not occupied)
+    * Netmask: 255.255.240.0
+    * Gateway: 10.60.0.1 (router)
+    * DHCP: 172.16.0.6
+    * Click Apply, mayber twice
+
+  * VLAN 50 is already created (management)
+  * Go to WLAN tab
+  * Remove test WIFI
+  * Create new GO for GUEST
+    * Profile name: GUEST-WIFI
+    * SSID: GUEST
+    * Click Apply
+    * Status: Enabled
+    * Interface: VLAN60 (IMPORTANT)
+    * Click TAB Security: WPA+WPA2
+    * Click WPA2
+    * Click PSK
+    * Password: i-love-HCMUT
+    * Click TAB Advanced
+    * Scroll down, click Enable on FlexConnect Local Switching
+    * Click enable on FlexConnect Local Auth
+    * Click Apply (twice)
+
+  * Create new GO for EMPLOYEE
+    * Profile name: EMPLOYEE-WIFI
+    * SSID: EMPLOYEE
+    * Click Apply
+    * Status: Enabled
+    * Interface: management (IMPORTANT)
+    * Click TAB Security: WPA+WPA2
+    * Click WPA2
+    * Click PSK
+    * Password: i-love-HCMUT
+    * Click TAB Advanced
+    * Scroll down, click Enable on FlexConnect Local Switching
+    * Click enable on FlexConnect Local Auth
+    * Click Apply (twice)
+
+* Go to CONTROLLER -> Interfaces -> management
+  * DHCP: 172.16.0.6
+  * Click Apply twice
+  * Save Packet Tracer
+  * Click Save Configuration (on top bar)
+
+* Go to each LAP
+  * Config -> Global -> DHCP
+
+
 
