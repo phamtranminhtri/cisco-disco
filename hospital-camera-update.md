@@ -388,7 +388,7 @@ ex
 do wr
 ```
 
-```
+
 * CORE-SW2:
 ```
 int gi1/0/1
@@ -992,7 +992,8 @@ ex
 conf t
 ```
 
-    * To show config
+  * To show config
+
 ```
 show start
 ```
