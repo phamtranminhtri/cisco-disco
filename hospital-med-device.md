@@ -310,9 +310,9 @@ name ADMIN
 vlan 40
 name CAMERA
 vlan 50
+name WLAN
 vlan 70
 name MED-DEVICE
-name WLAN
 vlan 90
 name INSIDE-SERVERS
 ex
