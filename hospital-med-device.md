@@ -289,11 +289,15 @@ do wr
 
 ### Multilayer switch (1:23:50)
 
+* Connection:
+  * gig1/0/1-2: FW1, FW2
+  * gig1/0/3-14: Access switch (building, IT room SW-IT, inside servers SW-SERVER)
+  * gig1/0/15-17: core-core (redundant)
 * Trunk port:
-  * CORE-SW1, CORE-SW2: gig1/0/3-13, gig1/0/17
+  * CORE-SW1, CORE-SW2: gig1/0/3-14
 
 ```
-int range gig1/0/3-13, gig1/0/17
+int range gig1/0/3-14
 switchport mode trunk
 ex
 
@@ -343,12 +347,12 @@ do wr
 
 ## 3. EtherChannel LACP (1:38:00)
 
-* 3 link between core switches (gig1/0/14-16)
+* 3 link between core switches (gig1/0/15-17)
 * active-active, active-passive, but no passive-passive
 * CORE-SW1:
 
 ```
-int range gig1/0/14-16
+int range gig1/0/15-17
 channel-group 1 mode active
 ex
 
@@ -361,7 +365,7 @@ do wr
 * CORE-SW2:
 
 ```
-int range gig1/0/14-16
+int range gig1/0/15-17
 channel-group 1 mode passive
 ex
 
