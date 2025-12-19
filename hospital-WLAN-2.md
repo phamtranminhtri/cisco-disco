@@ -1337,5 +1337,37 @@ wr mem
 * Go to each LAP
   * Config -> Global -> DHCP
 
+### 11.1. Update ACL for WLAN-GUEST
+
+* For CORE-SW1 and CORE-SW2:
+
+```
+ip access-list extended GUEST-RESTRICT
+
+permit icmp any host 172.16.0.7
+permit udp any host 172.16.0.7 eq domain
+permit tcp any host 172.16.0.7 eq domain
+permit icmp any host 172.16.0.6
+permit udp any host 172.16.0.6 eq bootps
+
+deny ip any 192.168.10.0 0.0.0.255
+deny ip any 10.20.0.0 0.0.15.255
+deny ip any 10.30.0.0 0.0.15.255
+deny ip any 10.40.0.0 0.0.15.255
+deny ip any 10.50.0.0 0.0.15.255
+deny ip any 10.70.0.0 0.0.15.255
+deny ip any 172.16.0.0 0.0.0.255
+deny ip any 172.16.1.0 0.0.0.255
+
+permit ip any any
+
+ex
+
+int vlan 60
+ip access-group GUEST-RESTRICT in
+ex
+
+do wr
+```
 
 
