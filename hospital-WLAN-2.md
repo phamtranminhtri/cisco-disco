@@ -30,6 +30,7 @@
   * Laptop: add wireless module
   * Smartphone (mocking guest device)
   * 3702i LAP: add power adapter
+  * Camera: config -> wireless0 -> Turn port status Off
 * Copy host device 9 times for 10 floor (building A 5 floor, B 5 floor)
   * Wires: Connect the wired host
 * Inside Server (server farm) switch:
