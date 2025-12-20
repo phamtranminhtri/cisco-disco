@@ -1,4 +1,4 @@
-# Hospital network
+# C. BHTQ Site
 
 |      Name     | VLAN |      Subnet     |                 |                 |
 |:-------------:|:----:|:---------------:|:---------------:|:---------------:|
@@ -13,7 +13,7 @@
 | INSIDE-SERVER | 90   | 172.16.0.0/24   | 172.17.0.0/24   | 172.18.0.0/24   |
 | DMZ           | None | 172.16.1.0/24   | None            | None            |
 
-## 0. Network design and beautification (19:00)
+## 0. Network design and beautification 
 
 * Network devices:
   * 2911 router x1: BHTQ-ROUTER (BHTQ), add HWIC-2T (for DCE serial)
@@ -40,7 +40,7 @@
 * Name devices, background color
 
 
-## 1. Basic settings to all devices + SSH + Standard ACL for SSH (38:45)
+## 1. Basic settings to all devices + SSH + Standard ACL for SSH 
 
 * Basic setting for switches, not firewall, leave for last
 * Hostname, console password, enable password, banner, password encryption, disable IP domain lookup
@@ -86,7 +86,7 @@ do wr
 ```
 * For 3650 multilayer switch, answer no first
 
-## 2. VLAN assignment plus all access and trunk ports on l2 and l3 switches (1:00:15)
+## 2. VLAN assignment plus all access and trunk ports on l2 and l3 switches 
 
 * Ensure access switch connect first 2 port to multilayer switch (gig0/1, gig0/2), to be trunk
 * Bypass password on access switch: Go to config and click on any interface
@@ -285,7 +285,7 @@ ex
 do wr
 ```
 
-### Multilayer switch (1:23:50)
+### Multilayer switch 
 
 * Connection:
   * gig1/0/1: BHTQ-ROUTER
@@ -320,7 +320,7 @@ ex
 do wr
 ```
 
-### 2.1. STP Portfast and BPDUguard configs on all access ports (1:32:00)
+### 2.1. STP Portfast and BPDUguard configs on all access ports 
 
 * Portfast: Orange to green fast in switch
   * Access switch: 6 trunk (gig0/1-2, fa0/21-24)
@@ -334,7 +334,7 @@ ex
 do wr
 ```
 
-## 3. EtherChannel LACP (1:38:00)
+## 3. EtherChannel LACP 
 
 * 2 link between core switches (gig1/0/6-7)
 * active-active, active-passive, but no passive-passive
@@ -365,7 +365,7 @@ ex
 do wr
 ```
 
-## 4. Subnetting and IP addressing (1:42:30)
+## 4. Subnetting and IP addressing 
 
 * IP plan: see 1:43:00
 * Network:
@@ -443,7 +443,7 @@ ip add 10.2.2.33 255.255.255.252
 clock rate 64000
 ```
 
-## 5. HSRP and Inter-VLAN routing on the l3 switches plus IP DHCP helper addresses (1:56:30)
+## 5. HSRP and Inter-VLAN routing on the l3 switches plus IP DHCP helper addresses 
 
 * Static IP for INSIDE server:
   * DHCP: 172.18.0.6
@@ -584,7 +584,7 @@ do wr
 show standby brief
 ```
 
-## 6. Static IP address to DMZ/server farm devices (2:15:45)
+## 6. Static IP address to DMZ/server farm devices 
 
 * Desktop -> IP Configuration
 * INSIDE SERVERS:
@@ -601,7 +601,7 @@ show standby brief
 
 
 
-## 7. DHCP server device configuration (2:19:25)
+## 7. DHCP server device configuration 
 
 * Services -> DHCP
   * Turn everything to 0
@@ -667,10 +667,10 @@ show standby brief
     * Click Add
 
 
-## 8. OSPF on the firewall, routers, and switches (2:24:00)
+## 8. OSPF on the firewall, routers, and switches 
 
 * Not touching firewall now, only router and l3 switch
-* BHTQ-CORE1: Advertise 9 network (10, 20, 30, 40, 50, 60, 70, 90, BHTQ-ROUTER) (hover mouse over switch)
+* BHTQ-CORE1: Advertise 9 network (10, 20, 30, 40, 50, 60, 70, 90, BHTQ-ROUTER) 
 
 ```
 router ospf 35
@@ -743,12 +743,10 @@ do wr
 ```
 
 
-
-
-* Test DHCP and ping: 3:13:20
+* Test DHCP and ping: 
   * IMPORTANT: If can't ping Camera, turn off Wireless0 and restart
 
-## 11. Wireless network configuration (3:15:30)
+## 9. Wireless network configuration 
 
 * Connect 1 PC to WLC
 * WLC -> Config -> Management:
@@ -835,9 +833,9 @@ do wr
 * Go to each LAP
   * Config -> Global -> DHCP
 
-### 11.1. Update ACL for WLAN-GUEST
+### 10. Update ACL for WLAN-GUEST
 
-* For CORE-SW1 and CORE-SW2, and BHTQ-CORE1, BHTQ-CORE2:
+* For CORE-SW1 and CORE-SW2, and BHTQ-CORE1, BHTQ-CORE2, and DBP-CORE1, DBP-CORE2:
 
 ```
 no ip access-list extended GUEST-RESTRICT
@@ -850,11 +848,18 @@ permit tcp any host 172.16.0.7 eq domain
 permit icmp any host 172.16.0.6
 permit udp any host 172.16.0.6 eq bootps
 
+permit icmp any host 172.17.0.7
+permit udp any host 172.17.0.7 eq domain
+permit tcp any host 172.17.0.7 eq domain
+permit icmp any host 172.17.0.6
+permit udp any host 172.17.0.6 eq bootps
+
 permit icmp any host 172.18.0.7
 permit udp any host 172.18.0.7 eq domain
 permit tcp any host 172.18.0.7 eq domain
 permit icmp any host 172.18.0.6
 permit udp any host 172.18.0.6 eq bootps
+
 
 deny ip any 192.168.10.0 0.0.0.255
 deny ip any 10.20.0.0 0.0.15.255
@@ -865,6 +870,14 @@ deny ip any 10.70.0.0 0.0.15.255
 deny ip any 172.16.0.0 0.0.0.255
 deny ip any 172.16.1.0 0.0.0.255
 
+deny ip any 192.168.11.0 0.0.0.255
+deny ip any 10.21.0.0 0.0.15.255
+deny ip any 10.31.0.0 0.0.15.255
+deny ip any 10.41.0.0 0.0.15.255
+deny ip any 10.51.0.0 0.0.15.255
+deny ip any 10.71.0.0 0.0.15.255
+deny ip any 172.17.0.0 0.0.0.255
+
 deny ip any 192.168.12.0 0.0.0.255
 deny ip any 10.22.0.0 0.0.15.255
 deny ip any 10.32.0.0 0.0.15.255
@@ -872,7 +885,6 @@ deny ip any 10.42.0.0 0.0.15.255
 deny ip any 10.52.0.0 0.0.15.255
 deny ip any 10.72.0.0 0.0.15.255
 deny ip any 172.18.0.0 0.0.0.255
-deny ip any 172.18.1.0 0.0.0.255
 
 permit ip any any
 
