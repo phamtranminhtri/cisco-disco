@@ -13,6 +13,12 @@ How to run:
     * Go to a device (PC/laptop/smart phone) and open Desktop -> Command Prompt
     * Try to ping another device in the network, such as same VLAN, different VLAN, different sites, DMZ, outside (Internet, represented by the two PC in USA and China).
     * Note: The smart phones were configured to connect to Guest WIFI, and therefore can only access the Internet. They cannot ping other devices inside the LAN.
+    * Note 2: Due to a bug in Cisco Packet Tracer, we need to reapply the ACL config to the multilayer switches (`CORE-SW1`, `CORE-SW2`, `DBP-CORE1`, `DBP-CORE2`, `BHTQ-CORE1`, `BHTQ-CORE2`) everytime we open `HOSPITAL.pkt`.
+    
+        ```
+        int vlan 60
+        ip access-group GUEST-RESTRICT in
+        ```
 
 ![Network Topology](./hospital-topology.png "Hospital Network Topology")
 
